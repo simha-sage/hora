@@ -9,7 +9,16 @@ function click(){
     fetch("https://api.sunrisesunset.io/json?lat=16.3691490&lng=81.6138599").then(res=>res.json())
 .then(data=>{
     let [dayTime,horaTime,sunrise]=calcDayTime(data.results.sunrise,data.results.sunset)
-    for(let i=0;i<12;i++){
+    let i=0;
+    for(i;i<12;i++){
+        let li=document.createElement("li")
+        li.innerText=(order[(i+week[day])%order.length ]+"     "+secToTime(sunrise)+" to"+secToTime(sunrise+horaTime))
+        list.appendChild(li)
+        console.log(order[(i+week[day])%order.length ],"     ",secToTime(sunrise),"to",secToTime(sunrise+horaTime))
+        sunrise+=horaTime
+    }
+    horaTime=(86400-dayTime)/12
+    for(i;i<24;i++){
         let li=document.createElement("li")
         li.innerText=(order[(i+week[day])%order.length ]+"     "+secToTime(sunrise)+" to"+secToTime(sunrise+horaTime))
         list.appendChild(li)
@@ -44,8 +53,9 @@ function secToTime(seconds){
     let hrs=seconds/3600
     let meridian="AM"
     if(hrs>12){
-        hrs-=12
-        meridian="PM"
+        let count=Math.floor(hrs/12)
+        hrs%=12
+        meridian=(count%2==0)?"AM":"PM"
     }
     const time=hrs+":"+min+" "+meridian
     return time
